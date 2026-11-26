@@ -5,6 +5,9 @@
 
 #include <linux/types.h>
 #include <linux/of_platform.h>
+#include <dt-bindings/clock/qcom,camcc-pineapple.h>
+#include <dt-bindings/clock/qcom,dispcc-pineapple.h>
+#include <dt-bindings/clock/qcom,videocc-pineapple.h>
 
 #include "mmrm_internal.h"
 #include "mmrm_debug.h"
@@ -48,7 +51,27 @@ static struct mmrm_platform_data commom_pt_platform_data = {
 	.throttle_clk_clients_data_length = ARRAY_SIZE(common_pt_throttle_clients_data),
 };
 
+/* Pineapple clock IDs differ from the Waipio/Kalama admission table. */
+static struct mmrm_throttle_clients_data pineapple_throttle_clients[] = {
+	{ MMRM_CLIENT_DOMAIN_DISPLAY, DISP_CC_MDSS_MDP_CLK_SRC },
+	{ MMRM_CLIENT_DOMAIN_VIDEO, VIDEO_CC_MVS0_CLK_SRC },
+	{ MMRM_CLIENT_DOMAIN_CAMERA, CAM_CC_IFE_0_CLK_SRC },
+	{ MMRM_CLIENT_DOMAIN_CVP, VIDEO_CC_MVS1_CLK_SRC },
+	{ MMRM_CLIENT_DOMAIN_CAMERA, CAM_CC_BPS_CLK_SRC },
+};
+
+static struct mmrm_platform_data pineapple_platform_data = {
+	.common_data = common_pt_data,
+	.common_data_length = ARRAY_SIZE(common_pt_data),
+	.throttle_clk_clients_data = pineapple_throttle_clients,
+	.throttle_clk_clients_data_length = ARRAY_SIZE(pineapple_throttle_clients),
+};
+
 static const struct of_device_id mmrm_dt_match[] = {
+	{
+		.compatible = "qcom,pineapple-mmrm",
+		.data = &pineapple_platform_data,
+	},
 	{
 		.compatible = "qcom,waipio-mmrm",
 		.data = &commom_pt_platform_data,
